@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F&B FOH Labor Management Dashboard | July 19 to July 25, 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:    #1E3328;
+    --midgreen: #2C4A3A;
+    --sage:     #DDE8E2;
+    --cream:    #F5EFE4;
+    --gold:     #BF9850;
+    --olive:    #4A4A40;
+    --charcoal: #1C1C1C;
+    --red:      #9B2335;
+    --red-bg:   #FDF3F3;
+    --gold-bg:  #FDF7ED;
+    --gray:     #ECECEC;
+    --gray-txt: #7A7A6A;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Source Sans 3', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--green);
+    color: white;
+    padding: 28px 48px 24px;
+    position: relative;
+  }
+
+  .site-header .appellation-logo {
+    margin-bottom: 16px;
+  }
+  .site-header .appellation-logo img {
+    filter: none;
+  }
+  .site-header h1 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .site-header .subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.03em;
+  }
+  .gold-rule {
+    height: 2px;
+    background: var(--gold);
+    margin: 0;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+  }
+
+  /* ── KPI Cards ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 32px 0 40px;
+  }
+  .kpi-card {
+    background: white;
+    border: 1px solid rgba(191,152,80,0.3);
+    border-top: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 20px 16px 16px;
+    text-align: center;
+  }
+  .kpi-card .kpi-num {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-card .kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--olive);
+  }
+  .kpi-sub {
+    margin-top: 6px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--olive);
+    line-height: 1.35;
+  }
+  .kpi-delta {
+    font-weight: 700;
+  }
+  .over-delta {
+    color: #9B2335;
+  }
+  .under-delta {
+    color: #BF9850;
+  }
+  /* Smaller kpi-num for the comparison tiles so they fit dollars + hours nicely */
+  .kpi-card.hours .kpi-num,
+  .kpi-card.labor .kpi-num,
+  .kpi-card.margin .kpi-num {
+    font-size: 32px;
+  }
+
+  .kpi-card.total  .kpi-num { color: var(--green); }
+  .kpi-card.at-par .kpi-num { color: var(--green); }
+  .kpi-card.over   .kpi-num { color: var(--red); }
+  .kpi-card.under  .kpi-num { color: var(--gold); }
+  .kpi-card.timing .kpi-num { color: var(--olive); }
+
+  /* ── Summary ── */
+  .summary-section {
+    background: white;
+    border-left: 4px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .summary-section h2 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--green);
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+  .summary-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .summary-section li {
+    padding: 5px 0 5px 18px;
+    position: relative;
+    color: var(--charcoal);
+    font-size: 13.5px;
+    border-bottom: 1px solid rgba(191,152,80,0.15);
+  }
+  .summary-section li:last-child { border-bottom: none; }
+  .summary-section li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  /* ── Section headers ── */
+  .section-label {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--green);
+    margin: 48px 0 6px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--gold);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .section-label .section-sub {
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 400;
+    color: var(--olive);
+    letter-spacing: 0.04em;
+  }
+  .section-desc {
+    font-size: 12.5px;
+    color: var(--olive);
+    margin-bottom: 20px;
+    margin-top: 6px;
+  }
+
+  /* ── Filter toggle ── */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .filter-bar label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--olive);
+  }
+  .toggle-btn {
+    font-size: 11.5px;
+    font-family: inherit;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1.5px solid var(--gold);
+    background: white;
+    color: var(--green);
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn.active {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+
+  /* ── Tables ── */
+  .variance-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid rgba(191,152,80,0.4);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 13px;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .variance-table th {
+    background: var(--green);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+  }
+  .variance-table th.num { text-align: center; }
+
+  /* Day bands */
+  .variance-table tr.day-band td {
+    background: var(--midgreen);
+    color: var(--cream);
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-top: 2px solid var(--gold);
+  }
+
+  /* Shift bands */
+  .variance-table tr.shift-band td {
+    background: var(--sage);
+    color: var(--green);
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+  }
+
+  /* Closed band */
+  .variance-table tr.closed-band td {
+    background: var(--gray);
+    color: var(--gray-txt);
+    font-size: 12px;
+    font-style: italic;
+    padding: 8px 12px;
+    border-top: 1px solid rgba(191,152,80,0.25);
+  }
+
+  /* Data rows */
+  .variance-table tr.data-row td {
+    padding: 7px 12px;
+    border-bottom: 1px solid rgba(191,152,80,0.18);
+    vertical-align: top;
+  }
+  .variance-table tr.data-row:last-child td { border-bottom: none; }
+  .variance-table tr.data-row.par  { background: var(--cream); }
+  .variance-table tr.data-row.over { background: var(--red-bg); }
+  .variance-table tr.data-row.under { background: var(--gold-bg); }
+  .variance-table tr.data-row.timing { background: var(--cream); }
+  .variance-table td.num { text-align: center; font-weight: 600; }
+  .variance-table td.notes { color: var(--olive); font-size: 12px; }
+
+  /* Variance cell colors */
+  .data-row.par    .variance-cell { color: var(--green); font-weight: 700; }
+  .data-row.over   .variance-cell { color: var(--red);   font-weight: 700; }
+  .data-row.under  .variance-cell { color: var(--gold);  font-weight: 700; }
+  .data-row.timing .variance-cell { color: var(--olive); font-weight: 700; font-style: italic; }
+
+  /* Hide-non-variance mode */
+  .variance-only tr.data-row.par { display: none; }
+
+  /* ── Footer ── */
+  .report-footer {
+    text-align: center;
+    padding: 24px 0 8px;
+    font-size: 11.5px;
+    color: var(--olive);
+    border-top: 1px solid rgba(191,152,80,0.35);
+    margin-top: 8px;
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    .filter-bar { display: none; }
+    .site-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .variance-table tr.day-band td,
+    .variance-table tr.shift-band td,
+    .variance-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .variance-table tr.data-row.over { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .variance-table tr.data-row.under { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .kpi-card { break-inside: avoid; }
+    .variance-table { page-break-inside: auto; }
+    .variance-table tr { page-break-inside: avoid; }
+  }
+
+/* labor budget */
+.lb-section { margin-top: 48px; padding-top: 24px; border-top: 2px solid #1E3328; }.lb-section h2 { font-family: 'Cormorant Garamond', Georgia, serif; color: #1E3328; font-weight: 600; font-size: 22px; margin: 24px 0 12px; }.lb-section h3 { font-family: 'Cormorant Garamond', Georgia, serif; color: #1E3328; font-weight: 600; font-size: 18px; margin: 20px 0 8px; }.lb-section .sub { color: #4A4A40; font-size: 13px; font-style: italic; margin-bottom: 8px; }.lb-section .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }.lb-section .kpi { background: white; border: 1px solid #E8E4D8; border-left: 4px solid #BF9850; padding: 14px 16px; }.lb-section .kpi .label { font-size: 10.5px; color: #4A4A40; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }.lb-section .kpi .value { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; color: #1E3328; font-weight: 600; margin-top: 2px; }.lb-section .kpi.hot { border-left-color: #9B2335; }.lb-section .kpi.hot .value { color: #9B2335; }.lb-section .kpi.light { border-left-color: #2C4A3A; background: #EAF1EC; }.lb-section .kpi.light .value { color: #2C4A3A; }.lb-section table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; margin-bottom: 12px; }.lb-section th { background: #1E3328; color: white; padding: 8px 10px; font-weight: 600; text-align: left; border: 1px solid #2a3f33; font-size: 10.5px; letter-spacing: 0.04em; }.lb-section td { padding: 6px 10px; border: 1px solid #E8E4D8; vertical-align: top; }.lb-section td.num { text-align: right; font-variant-numeric: tabular-nums; }.lb-section td.day { font-weight: 600; color: #1E3328; white-space: nowrap; }.lb-section td.name { font-weight: 600; color: #1E3328; }.lb-section td.over { color: #9B2335; font-weight: 600; }.lb-section td.under { color: #BF9850; font-weight: 600; }.lb-section td.flat { color: #4A4A40; }.lb-section td.hot { background: #FCEFEF; color: #9B2335; font-weight: 600; }.lb-section td.ok { background: #EAF1EC; }.lb-section td.indiv { background: #F5EFE4; color: #4A4A40; font-style: italic; }.lb-section tr.hot td { background: #FCEFEF; }.lb-section tr.light td { background: #EAF1EC; }.lb-section .status.hot { color: #9B2335; font-weight: 700; }.lb-section .status.light { color: #2C4A3A; font-weight: 700; }.lb-section .status.ok { color: #2C4A3A; font-weight: 700; }.lb-section .source { color: #4A4A40; font-size: 10.5px; }.lb-section ul { padding-left: 22px; }.lb-section li { margin-bottom: 6px; font-size: 12.5px; }.lb-section .total { background: #DDE8E2; font-weight: 700; }.lb-section .callout { background: #F5EFE4; border-left: 4px solid #BF9850; padding: 14px 18px; margin: 12px 0 16px; font-size: 12.5px; }
+/* deviation worksheet print rules */
+
+    @media print {
+      @page { size: letter landscape; margin: 0.4in; }
+      body.printing-deviation-summary > *:not(script):not(style) { display: none !important; }
+      body.printing-deviation-summary #pdf-print-stage { display: block !important; position: static !important; }
+      body.printing-deviation-summary #pdf-print-stage .no-print { display: none !important; }
+      body.printing-deviation-summary #pdf-print-stage textarea.dev-response-input {
+        display: none !important;
+      }
+      body.printing-deviation-summary #pdf-print-stage .dev-response-print {
+        display: block !important;
+      }
+      body.printing-deviation-summary,
+      body.printing-deviation-summary #pdf-print-stage {
+        background: #FFFFFF !important;
+        color: #1C1C1C !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+      }
+    }
+    .dev-response-print { display: none; }
+  </style>
+<style>
+html{scroll-behavior:smooth}
+.dash-nav{position:sticky;top:0;z-index:1000;background:#1E3328;display:flex;flex-wrap:wrap;gap:2px;padding:0 10px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.dash-nav a{color:#EDE7D9;text-decoration:none;font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:12px 15px;border-bottom:3px solid transparent;white-space:nowrap}
+.dash-nav a:hover{color:#FFFFFF;background:#2C4A3A}
+.dash-nav a.active{color:#FFFFFF;border-bottom-color:#BF9850}
+[id^="sec-"],#deviation-approval-section{scroll-margin-top:60px}
+@media print{.dash-nav{display:none}}
+</style>
+</head><body>
+<div class="site-header">
+  <div class="appellation-logo"><img src="data:image/png;base64,PLACEHOLDER_LOGO_BASE64" alt="Appellation Healdsburg" style="height:84px;width:auto;display:block"></div>
+  <h1>F&B FOH Labor Management Dashboard</h1>
+  <div class="subtitle">Folia + Beeline + Pool &nbsp;&middot;&nbsp; Week of July 19 to July 25, 2026</div>
+</div>
+<div class="gold-rule"></div>
